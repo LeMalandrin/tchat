@@ -1,0 +1,40 @@
+
+ <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+   <div class="container-fluid">
+    <a class="navbar-brand" href="#">Chatty</a>
+    <button class="navbar-toggler" type="button" (click)="toggleNavbar()">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="mainNavbar" [ngClass]="{ 'show' : navbarOpen }" class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+      </ul>
+
+      
+      <ul class="navbar-nav navbar-right">
+        <li class="nav-item navbar-user-manager dropdown">
+          <a class="nav-link dropdown-toggle" href="#" (click)="toggleUserDropdown()">
+            <i class="fa fa-user-circle"></i> Non connecté
+          </a>
+
+          
+          <div class="dropdown-menu dropdown-menu-right" [ngClass]="{ 'show' : userDropdownOpen }">
+            <a class="dropdown-item" href="#" (click)="hideUserDropdown()">
+              <i class="fa fa-sign-in text-signin"></i>
+              Se connecter
+            </a>
+            
+            <a class="dropdown-item" href="#" (click)="hideUserDropdown()">
+              <i class="fa fa-user-plus text-signin"></i>
+              S'inscrire
+            </a>
+          </div>
+        </li>
+      </ul>
+    </div>
+    
+</div> 
+  </nav>

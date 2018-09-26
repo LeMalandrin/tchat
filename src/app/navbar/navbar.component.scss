@@ -1,0 +1,33 @@
+.navbar {
+    padding: 0;
+}
+.navbar-brand {
+    color: #5fb3e4;
+}
+.navbar-brand,.nav-item {
+}
+.navbar-user-manager {
+    background-color: #5fb3e4;
+}
+.navbar-user-manager .nav-link {
+    color: white;
+}
+.dropdown-menu {
+    margin-top : 0;
+    border-radius: 0;
+    padding: 0;
+    border: solid 1px #424242;
+    background-color: #333;
+}
+.dropdown-item,.dropdown-item:visited {
+    color: white;
+    background-color: #333;
+    padding: 5px 0px 3px 10px;
+}
+.dropdown-item:hover {
+    background-color: #515151;
+}
+.navbar .container-fluid {
+    padding-right: 0;
+}
+
