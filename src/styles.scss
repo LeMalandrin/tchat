@@ -4,9 +4,43 @@
 
 
 body {
-    background-color: #292929;
+    background-color: #292d31 ;
 }
 
 .text-signin {
     color: #5fb3e4;
+}
+
+.btn-primary {
+    background-color: #41a9e6;
+    border-color: #41a9e6;
+}.btn-primary:hover {
+    background-color: #209ae0;
+    border-color: #209ae0;
+}
+
+.btn-default:hover {
+    background-color: #c6c6c7;
+}
+
+
+.has-errors input[type="text"], .has-errors input[type="email"], .has-errors input[type="password"] {
+    background-color: rgb(253, 193, 193);
+    border-color: red;
+} .has-errors label {
+    color: rgb(255, 102, 102);
+}.has-errors .input-group-text {
+    background-color: rgb(253, 193, 193);
+    border-color: red;
+}
+
+
+.has-success input[type="text"], .has-success input[type="email"], .has-success input[type="password"] {
+    background-color: rgb(175, 255, 202);
+    border-color: green;
+} .has-success label {
+    color: rgb(175, 255, 202);;
+}.has-success .input-group-text {
+    background-color: rgb(175, 255, 202);
+    border-color: green;
 }
