@@ -1,0 +1,61 @@
+<h2 class="register-form-title text-center col-md-12">Rejoindre les papoteurs</h2>
+<div class="container register-container">  
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <div class="form-group" [ngClass]="{ 'has-errors': submitted && controls.email.errors, 'has-success': submitted && !controls.email.errors }">
+        <label for="emailInput">Adresse E-mail</label>        
+        <div class="input-group mb-2 mr-sm-2">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <i class="fa fa-at"></i>  
+            </div>
+          </div>
+          <input type="email" formControlName="email" class="form-control"  [ngClass]="{ 'is-invalid': submitted && controls.email.errors }" id="emailInput" placeholder="Veuillez entrer une adresse e-mail..." >
+          <div *ngIf="submitted && controls.email.errors.required" class="invalid-feedback">
+              <div *ngIf="controls.email.errors.required">Email incorrect</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="usernameInput">Nom de papoteur</label>        
+        <div class="input-group mb-2 mr-sm-2">        
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <i class="fa fa-comments"></i>  
+            </div>
+          </div>
+          <input type="text" class="form-control" id="usernameInput" placeholder="Veuillez choisir un nom de papoteur...">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="passwordInput">Mot de passe</label>
+        <div class="input-group mb-2 mr-sm-2">        
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <i class="fa fa-key"></i>  
+            </div>
+          </div>
+          <input type="password" class="form-control" id="passwordInput" placeholder="Sécurisez votre compte avec un mot de passe...">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="passwordConfirmInput">Confirmez le mot de passe</label>
+        <div class="input-group mb-2 mr-sm-2">        
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <i class="fa fa-key"></i>  
+            </div>
+          </div>
+          <input type="password" class="form-control" id="passwordConfirmInput" placeholder="Retapez votre mot de passe...">
+        </div>
+      </div>
+
+      <div class="col-md-12 text-center" id="register-buttons">
+        <button type="button" class="btn btn-lg btn-default" id="reset-register-form-button">Réinitialiser</button>
+        <button  [disabled]="loading" class="btn btn-lg btn-primary">Rejoindre</button>
+      </div>
+  </form>        
+</div>
