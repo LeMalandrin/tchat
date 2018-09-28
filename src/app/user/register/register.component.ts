@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { SamePasswordsDirective } from '../../custom-validators/same-passwords.directive';
 
 @Component({
   selector: 'abe-register',
@@ -17,14 +18,17 @@ export class RegisterComponent implements OnInit {
   submitted = false;
 
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder) {
+    
+    this.registerForm = this.formBuilder.group({
+      'email' : new FormControl(this.user.email, [ Validators.required, Validators.email] ),
+      'username' : new FormControl(this.user.username, [ Validators.required, Validators.minLength(5), Validators.maxLength(15) ]),
+      'password' : new FormControl(this.user.password, [ Validators.required, Validators.minLength(8), Validators.maxLength(20) ]),
+      'passwordConfirm' : new FormControl(this.user.passwordConfirm, [ Validators.required ])
+    }, {validator: SamePasswordsDirective.validate.bind(this)} );
+  }
 
   ngOnInit() {    
-    this.registerForm = new FormGroup({
-      'email' : new FormControl(this.user.email, [ Validators.required, Validators.email] ),
-      'username' : new FormControl(this.user.email, [ Validators.required, Validators.min(5), Validators.max(15) ])
-      
-    });
   }
 
   // convenience getter for easy access to form fields
@@ -33,11 +37,24 @@ export class RegisterComponent implements OnInit {
   onSubmit() {    
     this.submitted = true;
     // stop here if form is invalid
+        console.log(this.registerForm.errors)
     if (this.registerForm.invalid) {
-        console.log(this.controls.email.errors)
         return;
     }
     console.log('SUCCESS!! :-)')
   }
 
+
+  updateEmail(event) {
+    this.user.email = event.target.value;
+  }
+  updateUsername(event) {
+    this.user.username = event.target.value;
+  }
+  updatePassword(event) {
+    this.user.password = event.target.value;
+  }
+  updatePasswordConfirm(event) {
+    this.user.passwordConfirm = event.target.value;
+  }
 }

@@ -13,6 +13,7 @@ import { ChatboxComponent } from './chat/chatbox/chatbox.component';
 import { ChatComponent } from './chat/chat.component';
 import { RegisterComponent } from './user/register/register.component';
 import { LoginComponent } from './user/login/login.component';
+import { SamePasswordsDirective } from './custom-validators/same-passwords.directive';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { LoginComponent } from './user/login/login.component';
     ChatboxComponent,
     ChatComponent,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    SamePasswordsDirective,
   ],
   imports: [
     BrowserModule,
