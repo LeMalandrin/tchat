@@ -1,8 +1,7 @@
 <h2 class="register-form-title text-center col-md-12">Rejoindre les papoteurs</h2>
 <div class="container register-container">  
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-
-      <div class="form-group" [ngClass]="{ 'has-errors': submitted && controls.email.errors, 'has-success': submitted && !controls.email.errors }">
+      <div class="form-group" [ngClass]="{ 'has-errors': submitted && (controls.email.errors || existingUserError.length > 0), 'has-success': submitted && !(controls.email.errors || existingUserError.length > 0) }">
         <label for="emailInput">Adresse E-mail</label>        
         <div class="input-group mb-2 mr-sm-2">
           <div class="input-group-prepend">
@@ -10,14 +9,16 @@
               <i class="fa fa-at"></i>  
             </div>
           </div>
-          <input type="email" formControlName="email" class="form-control"  [ngClass]="{ 'is-invalid': submitted && controls.email.errors }" id="emailInput" placeholder="Veuillez entrer une adresse e-mail..." >
-          <div *ngIf="submitted && controls.email.errors.required" class="invalid-feedback">
-              <div *ngIf="controls.email.errors.required">Email incorrect</div>
+          <input type="email" (keyup)="updateEmail($event)" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && (controls.email.errors || existingUserError.length > 0) }" id="emailInput" placeholder="Veuillez entrer une adresse e-mail..." >
+          <div *ngIf="submitted && (controls.email.errors || existingUserError.length > 0)" class="invalid-feedback">
+              <div *ngIf="controls.email.errors?.required">Le champ e-mail est obligatoire</div>
+              <div *ngIf="controls.email.errors?.email">Vous devez renseigner une adresse email</div>
+              <div>{{ existingUserError }}</div>
           </div>
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" [ngClass]="{ 'has-errors': submitted && controls.username.errors, 'has-success': submitted && !controls.username.errors }">
         <label for="usernameInput">Nom de papoteur</label>        
         <div class="input-group mb-2 mr-sm-2">        
           <div class="input-group-prepend">
@@ -25,11 +26,16 @@
               <i class="fa fa-comments"></i>  
             </div>
           </div>
-          <input type="text" class="form-control" id="usernameInput" placeholder="Veuillez choisir un nom de papoteur...">
+          <input type="text" class="form-control" (keyup)="updateUsername($event)" formControlName="username" [ngClass]="{ 'is-invalid': submitted && controls.username.errors }" id="usernameInput" placeholder="Veuillez choisir un nom de papoteur...">          
+          <div *ngIf="submitted && controls.username.errors" class="invalid-feedback">
+              <div *ngIf="controls.username.errors.required">Vous devez renseigner un nom de papoteur</div>
+              <div *ngIf="controls.username.errors.minlength">Le nom de papoteur est trop court (5 caractéres minnimum)</div>
+              <div *ngIf="controls.username.errors.maxlength">Le nom de papoteur est trop long (15 caractéres maximum)</div>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" [ngClass]="{ 'has-errors': submitted && controls.password.errors, 'has-success': submitted && !controls.password.errors }">
         <label for="passwordInput">Mot de passe</label>
         <div class="input-group mb-2 mr-sm-2">        
           <div class="input-group-prepend">
@@ -37,11 +43,16 @@
               <i class="fa fa-key"></i>  
             </div>
           </div>
-          <input type="password" class="form-control" id="passwordInput" placeholder="Sécurisez votre compte avec un mot de passe...">
+          <input type="password" class="form-control" (keyup)="updatePassword($event)" formControlName="password" [ngClass]="{ 'is-invalid': submitted && controls.password.errors }" id="passwordInput" placeholder="Sécurisez votre compte avec un mot de passe..."> 
+          <div *ngIf="submitted && controls.password.errors" class="invalid-feedback">
+              <div *ngIf="controls?.password.errors.required">Vous devez renseigner un mot de passe</div>
+              <div *ngIf="controls?.password.errors.minlength">Le mot de passe est trop court (8 caractéres minnimum)</div>
+              <div *ngIf="controls?.password.errors.maxlength">Le mot de passe est trop long (20 caractéres maximum)</div>
+          </div>
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" [ngClass]="{ 'has-errors': submitted && (controls.passwordConfirm.errors || registerForm.errors), 'has-success': submitted && !(controls.passwordConfirm.errors || registerForm.errors) }">
         <label for="passwordConfirmInput">Confirmez le mot de passe</label>
         <div class="input-group mb-2 mr-sm-2">        
           <div class="input-group-prepend">
@@ -49,13 +60,24 @@
               <i class="fa fa-key"></i>  
             </div>
           </div>
-          <input type="password" class="form-control" id="passwordConfirmInput" placeholder="Retapez votre mot de passe...">
+          <input type="password" class="form-control" id="passwordConfirmInput" placeholder="Retapez votre mot de passe..." (keyup)="updatePasswordConfirm($event)" formControlName="passwordConfirm" [ngClass]="{ 'is-invalid': submitted && (controls.passwordConfirm.errors || registerForm.errors) }">          
+          <div *ngIf="submitted && (controls.passwordConfirm.errors || registerForm.errors)" class="invalid-feedback">
+              <div *ngIf="controls.passwordConfirm.errors?.required">Vous devez retaper le mot de passe</div>
+              <div *ngIf="registerForm?.errors?.notSame">Les mots de passe doivent être identiques</div>
+          </div>
         </div>
       </div>
 
-      <div class="col-md-12 text-center" id="register-buttons">
+      <div class="col-md-12 text-center" id="register-buttons" *ngIf="!processing;else waitingImage">
         <button type="button" class="btn btn-lg btn-default" id="reset-register-form-button">Réinitialiser</button>
-        <button  [disabled]="loading" class="btn btn-lg btn-primary">Rejoindre</button>
+        <button  class="btn btn-lg btn-primary">Rejoindre</button>
       </div>
+
+      <ng-template #waitingImage> 
+        <div class="col-md-12 text-center waiting-image">
+          <i class="fa fa-circle-o-notch fa-spin fa-3x"></i> 
+        </div>
+      </ng-template>
+
   </form>        
 </div>

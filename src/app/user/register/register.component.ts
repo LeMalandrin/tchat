@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { SamePasswordsDirective } from '../../custom-validators/same-passwords.directive';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireAuth  } from 'angularfire2/auth';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'abe-register',
@@ -15,16 +19,23 @@ export class RegisterComponent implements OnInit {
      'passwordConfirm': ""
   };
   submitted = false;
+  processing = false;
+  readyToPersist = false;
+  existingUserError:string = "";
+  existingUsers: Observable<any[]>;
 
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder, public db: AngularFireDatabase, public auth: AngularFireAuth) {   
+    this.existingUsers = db.list('users').valueChanges();
+    this.registerForm = this.formBuilder.group({
+      'email' : new FormControl(this.user.email, [ Validators.required, Validators.email] ),
+      'username' : new FormControl(this.user.username, [ Validators.required, Validators.minLength(5), Validators.maxLength(15) ]),
+      'password' : new FormControl(this.user.password, [ Validators.required, Validators.minLength(8), Validators.maxLength(20) ]),
+      'passwordConfirm' : new FormControl(this.user.passwordConfirm, [ Validators.required ])
+    }, {validator: SamePasswordsDirective.validate.bind(this)} );
+  }
 
   ngOnInit() {    
-    this.registerForm = new FormGroup({
-      'email' : new FormControl(this.user.email, [ Validators.required, Validators.email] ),
-      'username' : new FormControl(this.user.email, [ Validators.required, Validators.min(5), Validators.max(15) ])
-      
-    });
   }
 
   // convenience getter for easy access to form fields
@@ -34,10 +45,35 @@ export class RegisterComponent implements OnInit {
     this.submitted = true;
     // stop here if form is invalid
     if (this.registerForm.invalid) {
-        console.log(this.controls.email.errors)
         return;
     }
-    console.log('SUCCESS!! :-)')
+    this.saveProcess();
   }
 
+  saveProcess() {
+    this.existingUsers.subscribe(users => {
+      users.forEach(user => {
+        this.processing = true;
+        if(user.email === this.user.email) {
+          this.existingUserError = "L'adresse e-mail renseignée est correspond à un compte existant";
+          this.processing = false;          
+          return;
+        }
+      })
+    })
+  }
+
+
+  updateEmail(event) {
+    this.user.email = event.target.value;
+  }
+  updateUsername(event) {
+    this.user.username = event.target.value;
+  }
+  updatePassword(event) {
+    this.user.password = event.target.value;
+  }
+  updatePasswordConfirm(event) {
+    this.user.passwordConfirm = event.target.value;
+  }
 }
