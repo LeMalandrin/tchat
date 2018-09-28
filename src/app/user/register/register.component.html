@@ -1,8 +1,7 @@
 <h2 class="register-form-title text-center col-md-12">Rejoindre les papoteurs</h2>
 <div class="container register-container">  
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-
-      <div class="form-group" [ngClass]="{ 'has-errors': submitted && controls.email.errors, 'has-success': submitted && !controls.email.errors }">
+      <div class="form-group" [ngClass]="{ 'has-errors': submitted && (controls.email.errors || existingUserError.length > 0), 'has-success': submitted && !(controls.email.errors || existingUserError.length > 0) }">
         <label for="emailInput">Adresse E-mail</label>        
         <div class="input-group mb-2 mr-sm-2">
           <div class="input-group-prepend">
@@ -10,10 +9,11 @@
               <i class="fa fa-at"></i>  
             </div>
           </div>
-          <input type="email" (keyup)="updateEmail($event)" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && controls.email.errors }" id="emailInput" placeholder="Veuillez entrer une adresse e-mail..." >
-          <div *ngIf="submitted && controls.email.errors" class="invalid-feedback">
-              <div *ngIf="controls.email.errors.required">Le champ e-mail est obligatoire</div>
-              <div *ngIf="controls.email.errors.email">Vous devez renseigner une adresse email</div>
+          <input type="email" (keyup)="updateEmail($event)" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && (controls.email.errors || existingUserError.length > 0) }" id="emailInput" placeholder="Veuillez entrer une adresse e-mail..." >
+          <div *ngIf="submitted && (controls.email.errors || existingUserError.length > 0)" class="invalid-feedback">
+              <div *ngIf="controls.email.errors?.required">Le champ e-mail est obligatoire</div>
+              <div *ngIf="controls.email.errors?.email">Vous devez renseigner une adresse email</div>
+              <div>{{ existingUserError }}</div>
           </div>
         </div>
       </div>
@@ -68,9 +68,16 @@
         </div>
       </div>
 
-      <div class="col-md-12 text-center" id="register-buttons">
+      <div class="col-md-12 text-center" id="register-buttons" *ngIf="!processing;else waitingImage">
         <button type="button" class="btn btn-lg btn-default" id="reset-register-form-button">Réinitialiser</button>
-        <button  [disabled]="loading" class="btn btn-lg btn-primary">Rejoindre</button>
+        <button  class="btn btn-lg btn-primary">Rejoindre</button>
       </div>
+
+      <ng-template #waitingImage> 
+        <div class="col-md-12 text-center waiting-image">
+          <i class="fa fa-circle-o-notch fa-spin fa-3x"></i> 
+        </div>
+      </ng-template>
+
   </form>        
 </div>

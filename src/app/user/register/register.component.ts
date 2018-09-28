@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { SamePasswordsDirective } from '../../custom-validators/same-passwords.directive';
+import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireAuth  } from 'angularfire2/auth';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'abe-register',
@@ -16,10 +19,14 @@ export class RegisterComponent implements OnInit {
      'passwordConfirm': ""
   };
   submitted = false;
+  processing = false;
+  readyToPersist = false;
+  existingUserError:string = "";
+  existingUsers: Observable<any[]>;
 
 
-  constructor(private formBuilder: FormBuilder) {
-    
+  constructor(private formBuilder: FormBuilder, public db: AngularFireDatabase, public auth: AngularFireAuth) {   
+    this.existingUsers = db.list('users').valueChanges();
     this.registerForm = this.formBuilder.group({
       'email' : new FormControl(this.user.email, [ Validators.required, Validators.email] ),
       'username' : new FormControl(this.user.username, [ Validators.required, Validators.minLength(5), Validators.maxLength(15) ]),
@@ -37,11 +44,23 @@ export class RegisterComponent implements OnInit {
   onSubmit() {    
     this.submitted = true;
     // stop here if form is invalid
-        console.log(this.registerForm.errors)
     if (this.registerForm.invalid) {
         return;
     }
-    console.log('SUCCESS!! :-)')
+    this.saveProcess();
+  }
+
+  saveProcess() {
+    this.existingUsers.subscribe(users => {
+      users.forEach(user => {
+        this.processing = true;
+        if(user.email === this.user.email) {
+          this.existingUserError = "L'adresse e-mail renseignée est correspond à un compte existant";
+          this.processing = false;          
+          return;
+        }
+      })
+    })
   }
 
 
