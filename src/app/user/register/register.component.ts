@@ -20,9 +20,10 @@ export class RegisterComponent implements OnInit {
   };
   submitted = false;
   processing = false;
-  readyToPersist = false;
   existingUserError:string = "";
   existingUsers: Observable<any[]>;
+  subscription: any;
+  userCreated: boolean = false;
 
 
   constructor(private formBuilder: FormBuilder, public db: AngularFireDatabase, public auth: AngularFireAuth) {   
@@ -51,15 +52,39 @@ export class RegisterComponent implements OnInit {
   }
 
   saveProcess() {
-    this.existingUsers.subscribe(users => {
-      users.forEach(user => {
+    this.subscription = this.existingUsers.subscribe(users => {
+      if(users.length > 0) {  
+        users.forEach((user,index,array) => {
+          this.processing = true;
+          if(user.email === this.user.email) {
+            this.existingUserError = "L'adresse e-mail renseignée est correspond à un compte existant";
+            this.processing = false;          
+            return;
+          }
+        })
+      } else {        
         this.processing = true;
-        if(user.email === this.user.email) {
-          this.existingUserError = "L'adresse e-mail renseignée est correspond à un compte existant";
-          this.processing = false;          
-          return;
-        }
-      })
+        this.createAndSaveUser();
+      }
+    });
+  }
+
+  createAndSaveUser() {
+    this.subscription.unsubscribe();
+    this.auth.auth.createUserWithEmailAndPassword(this.user.email,this.user.password)
+    .then(value => {
+      this.subscription.unsubscribe();
+      this.db.list('users').push({        
+        username: this.user.username,
+        email: this.user.email
+      }).then(value => {    
+        this.userCreated = true;
+      });
+    })
+    .catch(err => {
+      console.log("test1")
+      this.existingUserError = "L'adresse e-mail renseignée est correspond à un compte existant";
+      return;
     })
   }
 
