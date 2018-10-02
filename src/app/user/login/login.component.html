@@ -1,3 +1,51 @@
-<p>
-  login works!
-</p>
+<h2 class="login-form-title text-center col-md-12">Je me connecte</h2>
+<div class="container login-container">  
+  <div>
+    <div class="alert alert-info" *ngIf="informationMsg">
+      <i class="fa fa-info-circle"></i> {{ informationMsg }}
+    </div>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group" [ngClass]="{ 'has-errors': submitted && (controls.login.errors), 'has-success': submitted && !controls.login.errors }">
+        <label for="loginInput">Adresse e-mail / nom de papoteur</label>        
+        <div class="input-group mb-2 mr-sm-2">
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <i class="fa fa-user"></i>  
+            </div>
+          </div>
+          <input type="email" formControlName="login" class="form-control" [ngClass]="{ 'is-invalid': submitted && controls.login.errors }" id="loginInput" placeholder="Veuillez renseigner l'adresse email / le nom de papoteur..." >
+          <div *ngIf="submitted && controls.login.errors" class="invalid-feedback">
+              <div *ngIf="controls.login.errors?.required">Vous devez renseigner un login (email ou nom de papoteur)</div>
+              <div *ngIf="!controls.login.errors?.existingLogin">L'adresse e-mail ou le nom de papoteur saisi(e) n'existe pas</div>
+          </div>
+        </div>
+      </div>
+
+
+      
+      <div class="form-group" [ngClass]="{ 'has-errors': submitted && controls.password.errors, 'has-success': submitted && !controls.password.errors }">
+        <label for="passwordInput">Mot de passe</label>
+        <div class="input-group mb-2 mr-sm-2">        
+          <div class="input-group-prepend">
+            <div class="input-group-text">
+              <i class="fa fa-key"></i>  
+            </div>
+          </div>
+          <input type="password" class="form-control" formControlName="password" [ngClass]="{ 'is-invalid': submitted && controls.password.errors }" id="passwordInput" placeholder="Renseignez votre mot de passe..."> 
+          <div *ngIf="submitted && controls.password.errors" class="invalid-feedback">
+              <div *ngIf="controls?.password.errors.required">Vous devez renseigner un mot de passe</div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-md-12 text-center" id="login-buttons" *ngIf="!processing;else waitingImage">
+        <button type="button" class="btn btn-lg btn-default" id="reset-login-form-button">Réinitialiser</button>
+        <button  class="btn btn-lg btn-primary">Rejoindre</button>
+      </div>
+
+
+    </form>
+  </div>
+</div>

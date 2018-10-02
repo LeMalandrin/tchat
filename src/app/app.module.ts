@@ -18,6 +18,7 @@ import { SamePasswordsDirective } from './custom-validators/same-passwords.direc
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { environment } from '../environments/environment';
+import { ExistingLoginDirective } from './custom-validators/existing-login.directive';
  
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { environment } from '../environments/environment';
     RegisterComponent,
     LoginComponent,
     SamePasswordsDirective,
+    ExistingLoginDirective,
   ],
   imports: [
     BrowserModule,
