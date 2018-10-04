@@ -14,12 +14,11 @@ import { ChatComponent } from './chat/chat.component';
 import { RegisterComponent } from './user/register/register.component';
 import { LoginComponent } from './user/login/login.component';
 import { SamePasswordsDirective } from './custom-validators/same-passwords.directive';
+import { AuthGuard } from './auth.guard';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { environment } from '../environments/environment';
-import { ExistingLoginDirective } from './custom-validators/existing-login.directive';
- 
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,7 +31,6 @@ import { ExistingLoginDirective } from './custom-validators/existing-login.direc
     RegisterComponent,
     LoginComponent,
     SamePasswordsDirective,
-    ExistingLoginDirective,
   ],
   imports: [
     BrowserModule,
@@ -43,7 +41,7 @@ import { ExistingLoginDirective } from './custom-validators/existing-login.direc
     AngularFireModule.initializeApp(environment.firebase, 'angular-auth-firebase'),
     AngularFireDatabaseModule, // for database
   ],
-  providers: [],
+  providers: [AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

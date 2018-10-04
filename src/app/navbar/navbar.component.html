@@ -14,24 +14,42 @@
       </ul>
       
       <ul class="navbar-nav navbar-right">
-        <li class="nav-item navbar-user-manager dropdown">
-          <a class="nav-link dropdown-toggle" (click)="toggleUserDropdown()">
-            <i class="fa fa-user-circle"></i> Non connecté
-          </a>
+        <span class="navbar-text" *ngIf="!userInitialized;else userMenu">
+          <i class="fa fa-circle-o-notch fa-spin fa-1x"></i> Veuillez patienter... 
+        </span>
+        <ng-template #userMenu>
+          <li class="nav-item navbar-user-manager dropdown" *ngIf="user; else no_user">          
+            <a class="nav-link dropdown-toggle" (click)="toggleUserDropdown()">
+              <i class="fa fa-user-circle"></i> {{ user.username }}
+            </a>              
+            <div class="dropdown-menu dropdown-menu-right" [ngClass]="{ 'show' : userDropdownOpen }">
+              <a class="dropdown-item" routerLink="/logout" (click)="hideUserDropdown()">
+                <i class="fa fa-sign-in text-signout"></i>
+                Se deconnecter
+              </a>        
+            </div>
+          </li>
 
           
-          <div class="dropdown-menu dropdown-menu-right" [ngClass]="{ 'show' : userDropdownOpen }">
-            <a class="dropdown-item" routerLink="/login" (click)="hideUserDropdown()">
-              <i class="fa fa-sign-in text-signin"></i>
-              Se connecter
-            </a>
-            
-            <a class="dropdown-item" routerLink="/register" (click)="hideUserDropdown()">
-              <i class="fa fa-user-plus text-signin"></i>
-              S'inscrire
-            </a>
-          </div>
-        </li>
+          <ng-template #no_user>
+            <li class="nav-item navbar-user-manager dropdown">          
+              <a class="nav-link dropdown-toggle" (click)="toggleUserDropdown()">
+                <i class="fa fa-user-circle"></i> Non connecté
+              </a>              
+              <div class="dropdown-menu dropdown-menu-right" [ngClass]="{ 'show' : userDropdownOpen }">
+                <a class="dropdown-item" routerLink="/login" (click)="hideUserDropdown()">
+                  <i class="fa fa-sign-in text-signin"></i>
+                  Se connecter
+                </a>                
+                <a class="dropdown-item" routerLink="/register" (click)="hideUserDropdown()">
+                  <i class="fa fa-user-plus text-signin"></i>
+                  S'inscrire
+                </a>
+              </div>
+            </li>
+          </ng-template>
+
+        </ng-template>
       </ul>
     </div>
   </div> 

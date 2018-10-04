@@ -16,7 +16,8 @@
     border-radius: 0;
     padding: 0;
     border: solid 1px #424242;
-    background-color: #333;
+    background-color: #333;    
+    background-clip: initial !important;
 }
 .dropdown-item,.dropdown-item:visited {
     color: white;

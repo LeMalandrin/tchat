@@ -1,12 +1,12 @@
 <h2 class="login-form-title text-center col-md-12">Je me connecte</h2>
 <div class="container login-container">  
-  <div>
+  <div *ngIf="!logging;else waitingImage">    
     <div class="alert alert-info" *ngIf="informationMsg">
       <i class="fa fa-info-circle"></i> {{ informationMsg }}
     </div>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       
-      <div class="form-group" [ngClass]="{ 'has-errors': submitted && (controls.login.errors), 'has-success': submitted && !controls.login.errors }">
+      <div class="form-group" [ngClass]="{ 'has-errors': submitted && (controls.login.errors || !existingLogin), 'has-success': submitted && !(controls.login.errors || !existingLogin) }">
         <label for="loginInput">Adresse e-mail / nom de papoteur</label>        
         <div class="input-group mb-2 mr-sm-2">
           <div class="input-group-prepend">
@@ -14,17 +14,17 @@
               <i class="fa fa-user"></i>  
             </div>
           </div>
-          <input type="email" formControlName="login" class="form-control" [ngClass]="{ 'is-invalid': submitted && controls.login.errors }" id="loginInput" placeholder="Veuillez renseigner l'adresse email / le nom de papoteur..." >
-          <div *ngIf="submitted && controls.login.errors" class="invalid-feedback">
+          <input type="email" formControlName="login" class="form-control" [ngClass]="{ 'is-invalid': submitted && (controls.login.errors || !existingLogin) }" id="loginInput" placeholder="Veuillez renseigner l'adresse email / le nom de papoteur..." >
+          <div *ngIf="submitted && (controls.login.errors || !existingLogin)" class="invalid-feedback">
               <div *ngIf="controls.login.errors?.required">Vous devez renseigner un login (email ou nom de papoteur)</div>
-              <div *ngIf="!controls.login.errors?.existingLogin">L'adresse e-mail ou le nom de papoteur saisi(e) n'existe pas</div>
+              <div *ngIf="!existingLogin">L'adresse e-mail ou le nom de papoteur saisi(e) n'existe pas</div>
           </div>
         </div>
       </div>
 
 
       
-      <div class="form-group" [ngClass]="{ 'has-errors': submitted && controls.password.errors, 'has-success': submitted && !controls.password.errors }">
+      <div class="form-group" [ngClass]="{ 'has-errors': submitted && (controls.password.errors || hasPasswordError), 'has-success': submitted && !(controls.password.errors || hasPasswordError) }">
         <label for="passwordInput">Mot de passe</label>
         <div class="input-group mb-2 mr-sm-2">        
           <div class="input-group-prepend">
@@ -32,9 +32,10 @@
               <i class="fa fa-key"></i>  
             </div>
           </div>
-          <input type="password" class="form-control" formControlName="password" [ngClass]="{ 'is-invalid': submitted && controls.password.errors }" id="passwordInput" placeholder="Renseignez votre mot de passe..."> 
-          <div *ngIf="submitted && controls.password.errors" class="invalid-feedback">
-              <div *ngIf="controls?.password.errors.required">Vous devez renseigner un mot de passe</div>
+          <input type="password" class="form-control" formControlName="password" [ngClass]="{ 'is-invalid': submitted && (controls.password.errors || hasPasswordError) }" id="passwordInput" placeholder="Renseignez votre mot de passe..."> 
+          <div *ngIf="submitted && (controls.password.errors || hasPasswordError)" class="invalid-feedback">
+              <div *ngIf="controls.password.errors?.required">Vous devez renseigner un mot de passe</div>
+              <div *ngIf="hasPasswordError">Le mot de passe saisi est incorrect</div>
           </div>
         </div>
       </div>
@@ -44,8 +45,15 @@
         <button type="button" class="btn btn-lg btn-default" id="reset-login-form-button">Réinitialiser</button>
         <button  class="btn btn-lg btn-primary">Rejoindre</button>
       </div>
-
-
     </form>
   </div>
+
+  
+  <ng-template #waitingImage> 
+      <div class="col-md-12 text-center waiting-image">
+        <i class="fa fa-circle-o-notch fa-spin fa-3x"></i> 
+        <h4>connexion en cours...</h4>
+      </div>
+  </ng-template>
 </div>
+
