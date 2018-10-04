@@ -1,9 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { ExistingLoginDirective } from '../../custom-validators/existing-login.directive';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuth  } from 'angularfire2/auth';
+import { Router } from '@angular/router';
+import { ExistingLoginDirective } from '../../custom-validators/existing-login.directive';
 import { Observable } from 'rxjs';
+import { AuthService } from '../../auth.service';
 
 @Component({
   selector: 'abe-login',
@@ -21,14 +23,14 @@ export class LoginComponent implements OnInit {
   };
   submitted = false;
   users: any[];
-  passwordError = "";
+  existingLogin = false;
+  hasPasswordError = false;
+  logging = false;
 
 
-  constructor(private formBuilder: FormBuilder, public db: AngularFireDatabase, public auth: AngularFireAuth) {  
-    let existingLoginValidator = new  ExistingLoginDirective();
-    existingLoginValidator.setUsers( this.db.list('users').valueChanges() );
+  constructor(private formBuilder: FormBuilder, private router: Router, public db: AngularFireDatabase, public auth: AngularFireAuth) {  
     this.loginForm = this.formBuilder.group({
-      'login' : new FormControl(this.user.login, [ Validators.required, existingLoginValidator.validate()] ),
+      'login' : new FormControl(this.user.login, [ Validators.required] ),
       'password' : new FormControl(this.user.password, [ Validators.required ]),
     });
   }
@@ -39,22 +41,43 @@ export class LoginComponent implements OnInit {
   
   onSubmit() {   
     this.submitted=true;
-    
+    this.logging = true;
+    this.existingLogin = ExistingLoginDirective.validate(this.controls.login.value, this.users);
     if (this.loginForm.invalid) {
+      this.logging = false;
       return;
     }
     this.loginProcess();
   }
 
   loginProcess() {
-    
-      this.auth.auth.signInWithEmailAndPassword(email, password).catch(function(error) {
-        
-      });
+    let hasPasswordError = false;
+    this.users.forEach(existingUser => {
+      if(existingUser.email == this.controls.login.value || existingUser.username == this.controls.login.value) {          
+        this.auth.auth.signInWithEmailAndPassword(existingUser.email, this.controls.password.value).then(value => {
+          this.hasPasswordError = false;          
+          localStorage.setItem('isLoggedIn', "true");
+          localStorage.setItem('email', existingUser.email);
+          this.router.navigateByUrl('/chat').then(() => {
+            this.router.navigate(NavbarComponent);
+          });
+        }).catch(error => {
+          this.hasPasswordError = true;
+        });
+      }
+    })
+    this.logging = false;
   }
 
 
   ngOnInit() {
+    this.db.list('users').valueChanges().subscribe(users => {
+      this.users = users
+    })
+  }
+
+  ngOnDestroy() {
+    
   }
 
 }
