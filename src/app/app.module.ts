@@ -19,6 +19,7 @@ import { AuthGuard } from './auth.guard';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { environment } from '../environments/environment';
+import { AlreadyConnectedDirective } from './custom-validators/already-connected.directive';
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,6 +32,7 @@ import { environment } from '../environments/environment';
     RegisterComponent,
     LoginComponent,
     SamePasswordsDirective,
+    AlreadyConnectedDirective,
   ],
   imports: [
     BrowserModule,

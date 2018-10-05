@@ -4,6 +4,7 @@ import { SamePasswordsDirective } from '../../custom-validators/same-passwords.d
 import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuth  } from 'angularfire2/auth';
 import { Observable } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 
 @Component({
   selector: 'abe-register',
@@ -73,10 +74,12 @@ export class RegisterComponent implements OnInit {
     this.subscription.unsubscribe();
     this.auth.auth.createUserWithEmailAndPassword(this.user.email,this.user.password)
     .then(value => {
+      let uidGenerated = uuid();
       this.subscription.unsubscribe();
-      this.db.list('users').push({        
+      this.db.object('users/' + uidGenerated).set({      
         username: this.user.username,
-        email: this.user.email
+        email: this.user.email,
+        uid: uidGenerated
       }).then(value => {    
         this.userCreated = true;
       });

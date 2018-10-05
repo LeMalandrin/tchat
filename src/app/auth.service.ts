@@ -1,17 +1,35 @@
 import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { Router } from '@angular/router';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor() { }
+  private loggedUser = new Subject<any>();
 
-  logout(): void {
+  constructor(private router: Router, public db: AngularFireDatabase) { }
+
+  logout(): void {    
+    console.log(this.getLoggedUser());
+    this.router.navigateByUrl('/login');
+    let uid = localStorage.getItem('uid');
+    this.db.object('sessions/' + uid).remove();
     localStorage.setItem('isLoggedIn', "false");
     localStorage.removeItem('email');
+    this.setLoggedUser(false);
   } 
 
+  
+  setLoggedUser(user: any) {
+    this.loggedUser.next(user);
+  }
+
+  getLoggedUser(): Observable<any> {
+    return this.loggedUser.asObservable();
+  }
   
   public isLoggedIn(): boolean{
     let status = false;
