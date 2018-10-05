@@ -15,8 +15,8 @@ export class AuthService {
   logout(): void {    
     console.log(this.getLoggedUser());
     this.router.navigateByUrl('/login');
-    let uid = localStorage.getItem('uid');
-    this.db.object('sessions/' + uid).remove();
+    let cid = localStorage.getItem('connectionId');
+    this.db.object('sessions/' + cid).remove();
     localStorage.setItem('isLoggedIn', "false");
     localStorage.removeItem('email');
     this.setLoggedUser(false);
