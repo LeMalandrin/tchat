@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 @Component({
   selector: 'abe-userlist',
@@ -6,10 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./userlist.component.scss']
 })
 export class UserlistComponent implements OnInit {
+  users: any[];
 
-  constructor() { }
+  constructor(private db: AngularFireDatabase) { }
 
   ngOnInit() {
+    this.db.list('sessions');
   }
 
 }
