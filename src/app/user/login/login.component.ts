@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { ExistingLoginDirective } from '../../custom-validators/existing-login.directive';
 import { AlreadyConnectedDirective } from '../../custom-validators/already-connected.directive';
 import { AuthService } from '../../auth.service';
+import { v4 as uuid } from 'uuid';
 
 @Component({
   selector: 'abe-login',
@@ -62,10 +63,12 @@ export class LoginComponent implements OnInit {
           this.hasPasswordError = false;          
           localStorage.setItem('isLoggedIn', "true");
           localStorage.setItem('email', existingUser.email);
-          localStorage.setItem('uid', existingUser.uid);
-          this.db.object('sessions/' + existingUser.uid).set({ 
+          let connectionId = uuid();
+          localStorage.setItem('connectionId', connectionId);
+          this.db.object('sessions/' + connectionId).set({ 
             isLogged: true, 
-            uid: existingUser.uid 
+            uid: existingUser.uid ,
+            connectionId: connectionId
           }).then(()=> {
             this.router.navigateByUrl('/chat').then(() => {
               this.authService.setLoggedUser(existingUser);
