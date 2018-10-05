@@ -23,7 +23,7 @@
               <i class="fa fa-user-circle"></i> {{ user.username }}
             </a>              
             <div class="dropdown-menu dropdown-menu-right" [ngClass]="{ 'show' : userDropdownOpen }">
-              <a class="dropdown-item" routerLink="/logout" (click)="hideUserDropdown()">
+              <a class="dropdown-item" routerLink="" (click)="logout();hideUserDropdown()">
                 <i class="fa fa-sign-in text-signout"></i>
                 Se deconnecter
               </a>        

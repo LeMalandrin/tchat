@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, HostListener, Output } from '@angular/core';
 import { AuthService } from '../auth.service';
 import { AngularFireDatabase } from 'angularfire2/database';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'abe-navbar',
@@ -11,15 +12,22 @@ export class NavbarComponent implements OnInit {
   navbarOpen = false;
   userDropdownOpen = false;
   userLoggedIn = false;
+  userSubscription: Subscription;
   user: any;
   users: any[];
   userInitialized = false;
-
+  isLoggedIn: boolean = false;
   constructor(private authService: AuthService, private db: AngularFireDatabase) { 
-
+    this.userSubscription = this.authService.getLoggedUser().subscribe( loggedUser => {
+      this.user = loggedUser;
+    })
   }
 
-  ngOnInit() {    
+  logout() {
+    this.authService.logout();
+  }
+
+  ngOnInit() {        
     if( this.authService.isLoggedIn() ) {
       let user = this.db.list('users', ref=>ref.orderByChild('email').equalTo(this.authService.getEmail()).limitToFirst(1)).valueChanges();
       user.subscribe( user => {
