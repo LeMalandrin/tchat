@@ -12,7 +12,14 @@ export class UserlistComponent implements OnInit {
   constructor(private db: AngularFireDatabase) { }
 
   ngOnInit() {
-    this.db.list('sessions');
+    this.db.list('sessions').valueChanges().subscribe(users => {
+      let connectedUsers = [];
+      users.forEach(user => {
+        for(var connectedUser in connectedUsers) {
+
+        }
+      });
+    });
   }
 
 }
