@@ -7,19 +7,33 @@ import { AngularFireDatabase } from 'angularfire2/database';
   styleUrls: ['./userlist.component.scss']
 })
 export class UserlistComponent implements OnInit {
-  users: any[];
+  sessions: any[] = [];
+  connectedUsersUids: any[] = [];
+  connectedUsers: any[] = [];
+  sessionsSubscription;
 
   constructor(private db: AngularFireDatabase) { }
 
   ngOnInit() {
-    this.db.list('sessions').valueChanges().subscribe(users => {
-      let connectedUsers = [];
-      users.forEach(user => {
-        for(var connectedUser in connectedUsers) {
+    this.sessionsSubscription = this.db.list('sessions').valueChanges();
+    this.sessionsSubscription.subscribe(sessions => {
+      for(var session of sessions) {
+        let found = false;
 
+        for(var connectedUser of this.connectedUsersUids) {
+          if(session.uid == connectedUser) {
+            found = true;
+          }
         }
-      });
-    });
+
+        if(!found) {
+          this.connectedUsersUids.push(session.uid)
+        }
+
+        console.log(this.connectedUsersUids);
+      }
+
+    })
   }
 
 }
