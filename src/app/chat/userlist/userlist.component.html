@@ -1,3 +1,3 @@
-<ul *ngFor="let user of connectedUsers">
+<ul *ngFor="let user of connectedUsers | keyvalue">
   <li> {{ user.username }} </li>
 </ul>
